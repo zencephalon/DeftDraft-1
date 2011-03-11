@@ -3,6 +3,10 @@
 C/Draft is a fullscreen simple text editor, with an extra feature: you can work 
 with a full revision tree as you type.
 
+====== Screenshot ======
+
+http://i.imgur.com/fXYj3.png
+
 ===== Dependencies =====
 
 PyRoom depends on Python, PyGTK and XDG bindings for Python (python-xdg. Please
