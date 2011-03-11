@@ -7,15 +7,15 @@ import os
 import glob
 from subprocess import call
 
-author = 'The Pyroom Team'
-url = 'http://www.pyroom.org'
+author = 'Matthew Bunday'
+url = 'https://www.github.com/SlyShy/CDraft'
 
 PO_DIR = 'locales'
 MO_DIR = os.path.join('build', 'locales')
 
 for po in glob.glob(os.path.join(PO_DIR, '*.po')):
     lang = os.path.basename(po[:-3])[7:]
-    mo = os.path.join(MO_DIR, lang, 'LC_MESSAGES', 'pyroom.mo')
+    mo = os.path.join(MO_DIR, lang, 'LC_MESSAGES', 'cdraft.mo')
     target_dir = os.path.dirname(mo)
     if not os.path.isdir(target_dir):
         os.makedirs(target_dir)
@@ -34,7 +34,7 @@ class InstallData(install_data):
     
     def find_mo_files(self):
         data_files = []
-        for mo in glob.glob(os.path.join(MO_DIR, '*', 'LC_MESSAGES', 'pyroom.mo')):
+        for mo in glob.glob(os.path.join(MO_DIR, '*', 'LC_MESSAGES', 'cdraft.mo')):
             lang = os.path.basename(os.path.dirname(mo))
             lang = os.path.basename(
                 os.path.realpath(os.path.join(os.path.dirname(mo), '..'))
@@ -44,18 +44,18 @@ class InstallData(install_data):
         return data_files
 
 setup(
-  name='PyRoom',
-  version = '0.4.1',
+  name='CDraft',
+  version = '0.1.0',
   url = url,
   author = author,
-  description = 'PyRoom is a distraction-free, fullscreen text editor',
-  packages = ['PyRoom',],
-  package_data = {'PyRoom':['interface.glade', 'preferences.glade']},
+  description = 'CDraft is a distraction-free, fullscreen text editor',
+  packages = ['CDraft',],
+  package_data = {'CDraft':['interface.glade', 'preferences.glade']},
   data_files = [
-    ('/usr/share/pyroom/themes', glob.glob('themes/*.theme')),
-    ('/usr/share/pyroom', ['pyroom.png']),
-    ('/usr/share/applications', ['pyroom.desktop'])
+    ('/usr/share/cdraft/themes', glob.glob('themes/*.theme')),
+    ('/usr/share/cdraft', ['cdraft.png']),
+    ('/usr/share/applications', ['cdraft.desktop'])
     ],
-  scripts=['pyroom',],
+  scripts=['cdraft',],
   cmdclass={'install_data': InstallData},
 )
