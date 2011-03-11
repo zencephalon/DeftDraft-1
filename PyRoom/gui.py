@@ -258,6 +258,8 @@ class GUI(object):
         self.boxout.modify_bg(gtk.STATE_NORMAL, parse_color('border'))
         self.status.active_color = self.theme['foreground']
         self.status.inactive_color = self.theme['background']
+        self.revision_status.modify_fg(gtk.STATE_NORMAL, gtk.gdk.color_parse(self.theme['foreground']))
+        self.revision_status.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(self.theme['background']))
         self.textbox.modify_bg(gtk.STATE_NORMAL, parse_color('textboxbg'))
         self.textbox.modify_base(gtk.STATE_NORMAL, parse_color('textboxbg'))
         self.textbox.modify_base(gtk.STATE_SELECTED, parse_color('foreground'))
