@@ -107,21 +107,23 @@ def dispatch(*args, **kwargs):
 
 def make_accel_group(edit_instance):
     keybindings = {
-        'h': edit_instance.show_help,
         'i': edit_instance.show_info,
+        's': edit_instance.commit,
+        'z': edit_instance.revert,
         'n': edit_instance.new_buffer,
         'o': edit_instance.open_file,
         'p': edit_instance.preferences.show,
         'q': edit_instance.dialog_quit,
-        's': edit_instance.save_file,
         'w': edit_instance.close_dialog,
-        'y': edit_instance.redo,
-        'z': edit_instance.undo,
         'l': edit_instance.go_next,
+        'h': edit_instance.go_prev,
+        'j': edit_instance.go_down,
+        'k': edit_instance.revert,
         'm': edit_instance.dialog_minimize,
     }
     keybindings2 = {
-        'l': edit_instance.go_next
+        'h': edit_instance.show_help,
+        's': edit_instance.save_file,
     }
     ag = gtk.AccelGroup()
     for key, value in keybindings.items():
@@ -242,6 +244,29 @@ class UndoableBuffer(gtk.TextBuffer):
                     else:
                         self.curr.parent.curr_branch -= len(self.curr.parent.branches)
                         self.curr.parent.curr_branch += 1
+                        self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
+                        self.change_text()
+                        return
+
+    def go_down(self):
+        if not self.curr.branches == []:
+            self.curr = self.curr.branches[0]
+            self.change_text()
+
+    def go_prev(self):
+        if not self.curr.parent is None:
+                if len(self.curr.parent.branches) == 1:
+                    return
+                else:
+                    self.curr.parent.curr_branch = self.curr.parent.branches.index(self.curr)
+                    if 0 < self.curr.parent.curr_branch:
+                        self.curr.parent.curr_branch -= 1
+                        self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
+                        self.change_text()
+                        return
+                    else:
+                        self.curr.parent.curr_branch += len(self.curr.parent.branches)
+                        self.curr.parent.curr_branch -= 1
                         self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
                         self.change_text()
                         return
@@ -384,24 +409,28 @@ class BasicEdit(object):
         buf.command = True
         buf.go_next()
         buf.command = False
-        #self.show_revision_info()
 
-    def undo(self):
-        """ Undo last typing """
+    def go_prev(self):
+        buf = self.textbox.get_buffer()
+        buf.command = True
+        buf.go_prev()
+        buf.command = False
 
+    def go_down(self):
+        buf = self.textbox.get_buffer()
+        buf.command = True
+        buf.go_down()
+        buf.command = False
+
+    def revert(self):
         buf = self.textbox.get_buffer()
         buf.command = True
         buf.revert_to_parent()
         buf.command = False
-        #self.show_revision_info()
 
-    def redo(self):
-        """ Redo last typing """
-
+    def commit(self):
         buf = self.textbox.get_buffer()
-        self.status.set_text("Should commit!")
         buf.commit_text()
-        #self.show_revision_info()
 
     def ask_restore(self):
         """ask if backups should be restored
