@@ -159,7 +159,7 @@ class GUI(object):
         theme_name = config.get('visual', 'theme')
         self.theme = Theme(theme_name)
         self.status = FadeLabel()
-        self.revision_status = FadeLabel()
+        self.revision_status = gtk.Label()
         
         # Main window
 
@@ -185,7 +185,7 @@ class GUI(object):
         self.vbox.pack_start(self.hbox2, False, False, 0)
         self.revision_status.set_alignment(0.5, 0.5)
         self.revision_status.set_justify(gtk.JUSTIFY_LEFT)
-        self.revision_status.set_text("I just had sex.")
+        self.revision_status.set_text("")
 
         self.boxout = gtk.EventBox()
         self.boxout.set_border_width(1)
