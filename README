@@ -19,28 +19,7 @@ own language, you'll need to install gettext.
 
 ===== Installing and Running =====
 
-PyRoom is available as a distutils enabled package. Installation procedures
-for those are easy:
-
-Either unpack the tarball 
-    
-    $ tar xvfz pyroom*.tar.gz
-
-or check out our bazaar branch for a development version (we try to keep those
-unbroken and ready for production use)
-    
-    $ bzr branch lp:pyroom
-
-From there, you can either run pyroom from commandline
-
-    $ cd pyroom/
-    $ ./pyroom
-
-Or install it system wide
-
-    $ cd pyroom
-    $ python setup.py install # as root
-    $ pyroom
+$ git clone https://SlyShy@github.com/SlyShy/CDraft.git    
 
 ==== Usage ====
 
@@ -61,21 +40,20 @@ For example, to load PyRoom and instruct it to load the files "article.txt" and
 
 There are a few keys allowing you to perform a few useful commands:
 
-  * Control-H: Show help in a new buffer
+  * Alt-H: Show help in a new buffer
   * Control-I: Show buffer information
   * Control-N: Create a new buffer
   * Control-O: Open a file in a new buffer
   * Control-Q: Quit
-  * Control-S: Save current buffer
+  * Alt-S: Save current buffer
   * Control-Shift-S: Save current buffer as
   * Control-W: Close buffer and exit if it was the last buffer
-  * Control-Y: Redo last typing
-  * Control-Z: Undo last typing
   * Control-Page Up: Switch to previous buffer
   * Control-Page Down: Switch to next buffer
 
-===== Want to know more? =====
-
-  * PyRoom Website: http://pyroom.org
-  * PyRoom project page on Launchpad: https://launchpad.net/pyroom
-  * PyRoom IRC-Channel: irc://irc.freenode.net/pyroom - #pyroom on FreeNode
+  * Control-H: Cycle left.
+  * Control-L: Cycle right.
+  * Control-J: Descend down the tree.
+  * Control-K: Revert up the tree.
+  * Control-Z: Revert up the tree.
+  * Control-S: Commit branch.
