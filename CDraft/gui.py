@@ -36,7 +36,7 @@ if platform == 'win32':
 else:
     from xdg.BaseDirectory import xdg_data_home as data_home
 
-from pyroom_error import PyroomError
+from cdraft_error import CDraftError
 from globals import state, config
 
 ORIENTATION = {
@@ -58,7 +58,7 @@ class Theme(dict):
         dict.__init__(self)
         theme_filename = self._lookup_theme(theme_name)
         if not theme_filename:
-            raise PyroomError(_('theme not found: %s') % theme_name)
+            raise CDraftError(_('theme not found: %s') % theme_name)
         theme_file = ConfigParser.SafeConfigParser()
         theme_file.read(theme_filename)
         self.update(theme_file.items('theme'))
@@ -77,8 +77,8 @@ class Theme(dict):
         """lookup theme_filename for given theme_name
 
         order of preference is homedir, global dir, source dir (if available)"""
-        local_directory = os.path.join(data_home, 'pyroom', 'themes')
-        global_directory = '/usr/share/pyroom/themes' # FIXME: platform
+        local_directory = os.path.join(data_home, 'cdraft', 'themes')
+        global_directory = '/usr/share/cdraft/themes' # FIXME: platform
         # in case PyRoom is run without installation
         fallback_directory = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
@@ -225,11 +225,11 @@ class GUI(object):
         
         # text cursor
         gtkrc_string = """\
-        style "pyroom-colored-cursor" { 
+        style "cdraft-colored-cursor" { 
         GtkTextView::cursor-color = '%s'
         bg_pixmap[NORMAL] = "<none>"
         }
-        class "GtkWidget" style "pyroom-colored-cursor"
+        class "GtkWidget" style "cdraft-colored-cursor"
         """ % self.theme['foreground']
         gtk.rc_parse_string(gtkrc_string)
 
@@ -316,7 +316,7 @@ class GUI(object):
         )
 
     def quit(self):
-        """ quit pyroom """
+        """ quit cdraft """
         gtk.main_quit()
 
     def delete_event(self, widget, event, data=None):

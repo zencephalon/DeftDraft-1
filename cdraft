@@ -1,10 +1,10 @@
 #!/usr/bin/python2
-# -*- coding:utf-8 -*-
-
+# -*- coding: utf-8 -*-
 # -----------------------------------------------------------------------------
-# PyRoom - A clone of WriteRoom
+# CDraft, a fork of PyRoom.
 # Copyright (c) 2007 Nicolas P. Rougier & NoWhereMan
 # Copyright (c) 2008 The Pyroom Team - See AUTHORS file for more information
+# Copyright (c) 2011 Matthew Bunday
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,20 +21,18 @@
 # -----------------------------------------------------------------------------
 
 """
-PyRoom - A clone of WriteRoom
+CDraft - A fork of PyRoom
 =============================
-
-Based on code posted on ubuntu forums by NoWhereMan (www.nowhereland.it)
-(Ubuntu thread was "WriteRoom/Darkroom/?")
 
 :copyright: 2007 Nicolas P. Rougier & NoWhereMan Copyright
 :copyright: 2008 The PyRoom Theme - See AUTHORS file for more information
+:copyright: 2011 Matthew Bunday
 :license: GNU General Public License, version 3 or later
 """
 
-import sys, PyRoom.cmdline
+import sys, CDraft.cmdline
 
 try:
-    sys.exit(PyRoom.cmdline.main())
+    sys.exit(CDraft.cmdline.main())
 except KeyboardInterrupt:
     sys.exit(1)

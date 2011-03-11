@@ -59,11 +59,11 @@ def get_gnome_fonts():
 state = dict(
     gnome_fonts = get_gnome_fonts(),
     absolute_path = os.path.dirname(os.path.abspath(__file__)),
-    conf_dir = os.path.join(config_home, 'pyroom'),
-    data_dir = os.path.join(data_home, 'pyroom'),
-    themes_dir = os.path.join(data_home, 'pyroom', 'themes'),
+    conf_dir = os.path.join(config_home, 'cdraft'),
+    data_dir = os.path.join(data_home, 'cdraft'),
+    themes_dir = os.path.join(data_home, 'cdraft', 'themes'),
     # XXX: works only in linux
-    global_themes_dir = '/usr/share/pyroom/themes',
+    global_themes_dir = '/usr/share/cdraft/themes',
 )
 
 if not os.path.isdir(state['global_themes_dir']):
@@ -78,7 +78,7 @@ if not os.path.isdir(state['global_themes_dir']):
 # circular imports here
 from utils import FailsafeConfigParser            
 config = FailsafeConfigParser()
-config_file = os.path.join(state['conf_dir'], 'pyroom.conf')
+config_file = os.path.join(state['conf_dir'], 'cdraft.conf')
 if os.path.isfile(config_file):
     config.readfp(open(config_file, 'r'))
 for d in [state['conf_dir'], state['themes_dir']]:

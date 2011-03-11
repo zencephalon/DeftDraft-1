@@ -20,14 +20,15 @@
 # -----------------------------------------------------------------------------
 
 """
-PyRoom - A clone of WriteRoom
+CDraft - A fork of PyRoom
 =============================
 
 Based on code posted on ubuntu forums by NoWhereMan (www.nowhereland.it)
 (Ubuntu thread was "WriteRoom/Darkroom/?")
 
 :copyright: 2007 Nicolas P. Rougier & NoWhereMan Copyright
-:copyright: 2008 The PyRoom Theme - See AUTHORS file for more information
+:copyright: 2008 The PyRoom Team - See AUTHORS file for more information
+:copyright: 2011 Matthew Bunday
 :license: GNU General Public License, version 3 or later
 """
 
@@ -36,12 +37,12 @@ import sys
 
 import gtk
 
-import PyRoom
+import CDraft
 from basic_edit import BasicEdit
-from pyroom_error import handle_error
+from cdraft_error import handle_error
 from globals import state
 
-__VERSION__ = PyRoom.__VERSION__
+__VERSION__ = CDraft.__VERSION__
 
 def main():
     sys.excepthook = handle_error
@@ -52,7 +53,7 @@ def main():
     parser = OptionParser(usage = _('%prog [-v] \
 [file1] [file2]...'),
                         version = '%prog ' + __VERSION__,
-                        description = _('PyRoom lets you edit text files \
+                        description = _('CDraft lets you edit text files \
 simply and efficiently in a full-screen window, with no distractions.'))
     (options, args) = parser.parse_args()
     files = args
@@ -69,7 +70,7 @@ simply and efficiently in a full-screen window, with no distractions.'))
 
     state['edit_instance'].set_buffer(buffnum)
     state['edit_instance'].status.set_text(
-        _('Welcome to Pyroom %s, type Control-H for help') % __VERSION__
+        _('Welcome to CDraft %s, type Alt-H for help') % __VERSION__
     )
     gtk.main()
 

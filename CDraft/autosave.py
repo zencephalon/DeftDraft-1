@@ -24,7 +24,7 @@
 provide autosave functions
 """
 import gobject
-from pyroom_error import PyroomError
+from cdraft_error import CDraftError
 import os
 from globals import config
 
@@ -56,7 +56,7 @@ def autosave_timeout(edit_instance):
 
 def get_autosave_filename(filename):
     """get the filename autosave would happen to"""
-    SUFFIX = ".pyroom-autosave"
+    SUFFIX = ".cdraft-autosave"
     autosave_filename = os.path.join(
         os.path.dirname(filename),
         ".%s%s" % (os.path.basename(filename), SUFFIX)
@@ -77,7 +77,7 @@ def autosave(edit_instance):
                         buf.get_text(buf.get_start_iter(), buf.get_end_iter())
                     )
                 except IOError:
-                    raise PyroomError(_("Could not autosave file %s") % 
+                    raise CDraftError(_("Could not autosave file %s") % 
                                         buf.filename)
             finally:
                 backup_file.close()

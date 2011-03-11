@@ -29,13 +29,13 @@ import gtk, pango
 import traceback
 from exceptions import KeyboardInterrupt
 
-class PyroomError(Exception):
+class CDraftError(Exception):
     """our nice little exception"""
     pass
 
 def handle_error(exception_type, exception_value, exception_traceback):
     """display errors to the end user using dialog boxes"""
-    if exception_type == PyroomError:
+    if exception_type == CDraftError:
         message = exception_value.message
     elif exception_type == KeyboardInterrupt: # ctrl+c
         return
@@ -49,7 +49,7 @@ Please submit a bug report to launchpad""")
                 message_format=message)
     error_dialog.set_title(_('Error'))
     error_dialog.add_button(gtk.STOCK_OK, gtk.RESPONSE_OK)
-    if not exception_type == PyroomError:
+    if not exception_type == CDraftError:
         error_dialog.add_button (_("Details..."), 2)
     error_dialog.set_position(gtk.WIN_POS_CENTER)
     error_dialog.set_gravity(gtk.gdk.GRAVITY_CENTER)

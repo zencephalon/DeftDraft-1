@@ -22,7 +22,7 @@
 """
 provide basic editor functionality
 
-contains basic functions needed for pyroom - any core functionality is included
+contains basic functions needed for cdraft - any core functionality is included
 within this file
 """
 
@@ -30,7 +30,7 @@ import gtk
 import os
 import urllib
 
-from pyroom_error import PyroomError
+from cdraft_error import CDraftError
 from gui import GUI
 from preferences import Preferences
 import autosave
@@ -67,7 +67,7 @@ PyRoom stays out of your way with formatting options and buttons,
 it is largely keyboard controlled, via shortcuts. You can find a list
 of available keyboard shortcuts later.
 
-If enabled in preferences, pyroom will save your files automatically every
+If enabled in preferences, cdraft will save your files automatically every
 few minutes or when you press the keyboard shortcut.
 
 Commands:
@@ -532,9 +532,9 @@ Open those instead of the original file?''')
                 errortext += _(' You do not have permission to open \
 the file.')
             if not errno == 2:
-                raise PyroomError(errortext)
+                raise CDraftError(errortext)
         except:
-            raise PyroomError(_('Unable to open %s\n') % filename_to_open)
+            raise CDraftError(_('Unable to open %s\n') % filename_to_open)
         else:
             self.status.set_text(_('File %s open') % filename_to_open)
 
@@ -552,7 +552,7 @@ the file.')
                         "file://" + urllib.quote(buf.filename),
                         {
                             'mime_type':'text/plain',
-                            'app_name':'pyroom',
+                            'app_name':'cdraft',
                             'app_exec':'%F',
                             'is_private':False,
                             'display_name':os.path.basename(buf.filename),
@@ -571,9 +571,9 @@ the file.')
             if errno == 13:
                 errortext += _(' You do not have permission to write to \
 the file.')
-            raise PyroomError(errortext)
+            raise CDraftError(errortext)
         except:
-            raise PyroomError(_('Unable to save %s\n') % buf.filename)
+            raise CDraftError(_('Unable to save %s\n') % buf.filename)
         buf.modified = False
 
     def save_file_as(self):
@@ -665,7 +665,7 @@ continue editing your document.")
             try:
                 os.remove(autosave_fname)
             except OSError:
-                raise PyroomError(_('Could not delete autosave file.'))
+                raise CDraftError(_('Could not delete autosave file.'))
         if len(self.buffers) > 1:
             self.buffers.pop(self.current)
             self.current = min(len(self.buffers) - 1, self.current)

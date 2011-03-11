@@ -23,7 +23,7 @@
 allows for custom set preferences
 
 Creates a preferences UI that allows the user to customise settings; allows for
-the choice of a theme from $XDG_DATA_HOME/pyroom/themes as well as a custom
+the choice of a theme from $XDG_DATA_HOME/cdraft/themes as well as a custom
 theme created via the dialog
 """
 
@@ -31,7 +31,7 @@ import gtk
 import os
 
 from gui import Theme
-from pyroom_error import PyroomError
+from cdraft_error import CDraftError
 from globals import state, config
 from utils import get_themes_list, FailsafeConfigParser
 
@@ -91,7 +91,7 @@ class Preferences(object):
         active_style = config.get("visual", "theme")
         self.autosave.set_active(config.getint('editor', 'autosave'))
 
-        # Set up pyroom from conf file
+        # Set up cdraft from conf file
         self.linespacing_spinbutton.set_value(int(
             config.get('visual', 'linespacing')
         ))
@@ -199,7 +199,7 @@ class Preferences(object):
 
     def save_custom_theme(self, widget, data=None):
         """write the current custom theme to disk"""
-        chooser = gtk.FileChooserDialog('PyRoom', self.window, 
+        chooser = gtk.FileChooserDialog('CDraft', self.window, 
             gtk.FILE_CHOOSER_ACTION_SAVE,
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
             gtk.STOCK_SAVE, gtk.RESPONSE_OK)
@@ -237,11 +237,11 @@ class Preferences(object):
         self.dlg.hide()
         try:
             config_file = open(os.path.join(
-                state['conf_dir'], "pyroom.conf"), "w"
+                state['conf_dir'], "cdraft.conf"), "w"
             )
             config.write(config_file)
         except IOError:
-            raise PyroomError(_("Could not save preferences file."))
+            raise CDraftError(_("Could not save preferences file."))
             
     def customchanged(self, widget):
         """triggered when custom themes are changed, reloads style"""
