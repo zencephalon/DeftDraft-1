@@ -242,8 +242,7 @@ class UndoableBuffer(gtk.TextBuffer):
         if not self.curr.parent is None:
             self.curr = self.curr.parent
             self.set_text(self.curr.text)
-            self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_start))
-            self.move_mark_by_name("selection_bound", self.get_iter_at_offset(self.curr.bookmark_end))
+            self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_end))
 
     def set_the_text(self):
         if self.curr.committed:
