@@ -341,6 +341,10 @@ class BasicEdit(object):
                 return True
         return False
 
+    def show_revision_info(self):
+        buf = self.buffers[self.current]
+        self.revision_status.set_text("Depth: " + str(buf.curr.depth) + " Committed: " + str(buf.curr.committed) + " Children: " + str(len(buf.curr.branches)) + " Id: " + str(buf.curr.id))
+
     def show_info(self):
         """ Display buffer information on status label for 5 seconds """
 
@@ -359,13 +363,13 @@ class BasicEdit(object):
             'word_count': self.word_count(buf),
             'lines': buf.get_line_count(),
             }, 5000)
-        self.revision_status.set_text("Depth: " + str(buf.curr.depth) + " Committed: " + str(buf.curr.committed) + " Children: " + str(len(buf.curr.branches)) + " Id: " + str(buf.curr.id))
 
     def go_next(self):
         buf = self.textbox.get_buffer()
         buf.command = True
         buf.go_next()
         buf.command = False
+        self.show_revision_info()
 
     def undo(self):
         """ Undo last typing """
@@ -374,6 +378,7 @@ class BasicEdit(object):
         buf.command = True
         buf.revert_to_parent()
         buf.command = False
+        self.show_revision_info()
 
     def redo(self):
         """ Redo last typing """
@@ -381,6 +386,7 @@ class BasicEdit(object):
         buf = self.textbox.get_buffer()
         self.status.set_text("Should commit!")
         buf.commit_text()
+        self.show_revision_info()
 
     def ask_restore(self):
         """ask if backups should be restored
@@ -579,6 +585,7 @@ continue editing your document.")
         self.buffers.insert(self.current + 1, buf)
         buf.place_cursor(buf.get_end_iter())
         self.next_buffer()
+        self.show_revision_info()
         return buf
 
     def close_dialog(self):
