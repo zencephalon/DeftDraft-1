@@ -120,11 +120,21 @@ def make_accel_group(edit_instance):
         'l': edit_instance.go_next,
         'm': edit_instance.dialog_minimize,
     }
+    keybindings2 = {
+        'l': edit_instance.go_next
+    }
     ag = gtk.AccelGroup()
     for key, value in keybindings.items():
         ag.connect_group(
             ord(key),
             gtk.gdk.CONTROL_MASK,
+            gtk.ACCEL_VISIBLE,
+            dispatch(value)
+        )
+    for key, value in keybindings2.items():
+        ag.connect_group(
+            ord(key),
+            gtk.gdk.MOD1_MASK,
             gtk.ACCEL_VISIBLE,
             dispatch(value)
         )
@@ -345,9 +355,9 @@ class BasicEdit(object):
     def show_revision_info(self):
         buf = self.buffers[self.current]
         if buf.curr.committed:
-            part = "* "
+            part = "(+) "
         else:
-            part = "  "
+            part = "( ) "
         self.revision_status.set_text(part + str(buf.curr.depth) + " - " + str(len(buf.curr.branches)))
 
     def show_info(self):
