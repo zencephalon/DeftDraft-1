@@ -178,11 +178,18 @@ class UndoableDelete(object):
             self.mergeable = True
 
 class Text:
+    id = 0
     def __init__(self, text="", parent = None):
         self.text = text
+        self.id = Text.id
+        Text.id = Text.id + 1
         self.committed = False
         self.branches = []
         self.parent = parent
+        if not self.parent is None:
+            self.depth = self.parent.depth + 1
+        else:
+            self.depth = 0
 
 class UndoableBuffer(gtk.TextBuffer):
     """text buffer with added undo capabilities
@@ -197,31 +204,35 @@ class UndoableBuffer(gtk.TextBuffer):
         gtk.TextBuffer.__init__(self)
         self.modified = False
         self.curr = Text()
+        self.command = False
         self.connect('insert-text', self.on_insert_text)
         self.connect('delete-range', self.on_delete_range)
         self.connect('begin_user_action', self.on_begin_user_action)
 
     def commit_text(self):
-        curr.committed = true
+        self.curr.committed = True
 
     def revert_to_parent(self):
         if not self.curr.parent is None:
-            curr = self.curr.parent
+            self.curr = self.curr.parent
             self.set_text(self.curr.text)
 
     def set_the_text(self):
         if self.curr.committed:
-            t = Text(get_text(self.get_start_iter(), self.get_end_iter()), self.curr)
+            t = Text(self.get_text(self.get_start_iter(), self.get_end_iter()), self.curr)
             self.curr.branches.append(t)
             self.curr = t
         else:
             self.curr.text = self.get_text(self.get_start_iter(), self.get_end_iter())
 
     def on_insert_text(self, textbuffer, text_iter, text, length):
-        self.set_the_text()
+        if not self.command:
+            self.set_the_text()
+        self.command = False
 
     def on_delete_range(self, text_buffer, start_iter, end_iter):
-        self.set_the_text()
+        if not self.command:
+            self.set_the_text()
 
     def on_begin_user_action(self, *args, **kwargs):
         pass
@@ -315,25 +326,22 @@ class BasicEdit(object):
             'word_count': self.word_count(buf),
             'lines': buf.get_line_count(),
             }, 5000)
-        self.revision_status.set_text("Hello: " + str(len(buf.curr.branches)))
+        self.revision_status.set_text("Depth: " + str(buf.curr.depth) + " Committed: " + str(buf.curr.committed) + " Children: " + str(len(buf.curr.branches)) + " Id: " + str(buf.curr.id))
 
     def undo(self):
         """ Undo last typing """
 
         buf = self.textbox.get_buffer()
-        if buf.can_undo:
-            buf.undo()
-        else:
-            self.status.set_text(_('Nothing more to undo!'))
+        self.status.set_text("Should revert!")
+        buf.command = True
+        buf.revert_to_parent()
 
     def redo(self):
         """ Redo last typing """
 
         buf = self.textbox.get_buffer()
-        if buf.can_redo:
-            buf.redo()
-        else:
-            self.status.set_text(_('Nothing more to redo!'))
+        self.status.set_text("Should commit!")
+        buf.commit_text()
 
     def ask_restore(self):
         """ask if backups should be restored
