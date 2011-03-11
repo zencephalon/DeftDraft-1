@@ -180,12 +180,12 @@ class UndoableDelete(object):
 
 class Text:
     id = 0
-    def __init__(self, text="", parent = None):
+    def __init__(self, text="", parent = None, bookmark = None):
         self.text = text
         self.id = Text.id
         Text.id = Text.id + 1
         self.committed = False
-        self.bookmark = None
+        self.bookmark = bookmark
         self.branches = []
         self.curr_branch = None
         self.parent = parent
@@ -206,7 +206,7 @@ class UndoableBuffer(gtk.TextBuffer):
         """
         gtk.TextBuffer.__init__(self)
         self.modified = False
-        self.curr = Text()
+        self.curr = Text("", None, self.get_iter_at_mark(self.get_mark("insert")))
         self.command = False
         self.connect('changed', self.on_changed)
         self.connect('delete-range', self.on_delete_range)
@@ -242,13 +242,13 @@ class UndoableBuffer(gtk.TextBuffer):
         if self.curr.committed:
             start, end = self.get_bounds()
             t = Text(self.get_text(start, end), self.curr)
-            t.bookmark = self.get_iter_at_offset(self.cursor-position)
+            t.bookmark = self.get_iter_at_mark(self.get_mark("insert"))
             self.curr.branches.append(t)
             self.curr = t
         else:
             self.curr.text = self.get_text(self.get_start_iter(), self.get_end_iter())
-            if self.curr.bookmark.compare(self.get_iter_at_offset(self.cursor-position)) == -1:
-                self.curr.bookmark = self.get_iter_at_offset(self.cursor-position)
+            if self.curr.bookmark.compare(self.get_iter_at_mark(self.get_mark("insert"))) == -1:
+                self.curr.bookmark = self.get_iter_at_mark(self.get_mark("insert"))
 
     def on_changed(self, textbuffer):
         if not self.command:
