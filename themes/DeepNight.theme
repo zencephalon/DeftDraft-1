@@ -1,0 +1,12 @@
+[theme]
+padding = 8
+foreground = #8e548e548e54
+name = DeepNight
+height = 0.95
+textboxbg = #028000000f5c
+width = 0.55
+fontsize = 14
+background = #028000000f5c
+font = Times New Roman,
+border = #4a524a524a52
+

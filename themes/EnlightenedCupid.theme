@@ -1,0 +1,12 @@
+[theme]
+padding = 8
+foreground = #ab8470356f68
+name = EnlightenedCupid
+height = 0.64
+textboxbg = #028f00000190
+width = 0.6
+fontsize = 14
+background = #07ae000004b1
+font = Times New Roman,
+border = #400020d625d8
+

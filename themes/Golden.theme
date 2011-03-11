@@ -1,0 +1,12 @@
+[theme]
+padding = 8
+foreground = #ab8498f06f68
+name = Golden
+height = 0.66
+textboxbg = #028f00000190
+width = 0.62
+fontsize = 14
+background = #07ae000004b1
+font = Times New Roman,
+border = #40003e3020d6
+

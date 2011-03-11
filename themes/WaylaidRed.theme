@@ -1,0 +1,14 @@
+[theme]
+info = #000000000000
+foreground = #000000000000
+name = WaylaidRed
+lines = #000000000000
+height = 0.85
+padding = 8
+width = 0.55
+fontsize = 14
+background = #fffffefef5f5
+textboxbg = #fffffefef5f5
+font = Times New Roman,
+border = #8c8c07072b2b
+

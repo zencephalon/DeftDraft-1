@@ -1,0 +1,14 @@
+[theme]
+info = #8b8bbeefd6d6
+foreground = #8b8bbeefd6d6
+name = BlueDepression
+lines = #8b8bbeefd6d6
+height = 0.75
+padding = 8
+width = 0.45
+fontsize = 14
+background = #000000b30f5c
+textboxbg = #040400001212
+font = Times New Roman,
+border = #3b3b6a087373
+

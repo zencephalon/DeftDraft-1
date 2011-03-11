@@ -1,0 +1,14 @@
+[theme]
+info = #cca537c0a4e2
+foreground = #cca537c0a4e2
+name = Contemplate
+lines = #cca537c0a4e2
+height = 0.95
+padding = 8
+width = 0.55
+fontsize = 14
+background = #000000000000
+textboxbg = #000000000000
+font = Times New Roman,
+border = #2b85032b1faa
+

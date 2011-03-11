@@ -1,0 +1,14 @@
+[theme]
+info = #032b5dad768f
+foreground = #032b5dad768f
+name = Aqua
+lines = #032b5dad768f
+height = 0.95
+padding = 8
+width = 0.55
+fontsize = 14
+background = #00000c0c0f0f
+textboxbg = #00000c0c0f0f
+font = Times New Roman,
+border = #000024012d98
+

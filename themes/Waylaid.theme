@@ -1,0 +1,12 @@
+[theme]
+foreground = #000000000000
+name = Waylaid
+height = 0.95
+padding = 8
+width = 0.75
+fontsize = 14
+background = #ededf3f3f6f6
+textboxbg = #ededf3f3f6f6
+font = Times New Roman,
+border = #35356d279696
+
