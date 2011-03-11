@@ -201,6 +201,14 @@ class UndoableBuffer(gtk.TextBuffer):
         self.connect('delete-range', self.on_delete_range)
         self.connect('begin_user_action', self.on_begin_user_action)
 
+    def commit_text(self):
+        curr.committed = true
+
+    def revert_to_parent(self):
+        if not self.curr.parent is None:
+            curr = self.curr.parent
+            self.set_text(self.curr.text)
+
     def set_the_text(self):
         if self.curr.committed:
             t = Text(get_text(self.get_start_iter(), self.get_end_iter()), self.curr)
