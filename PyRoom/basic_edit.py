@@ -117,6 +117,7 @@ def make_accel_group(edit_instance):
         'w': edit_instance.close_dialog,
         'y': edit_instance.redo,
         'z': edit_instance.undo,
+        'l': edit_instance.go_next,
         'm': edit_instance.dialog_minimize,
     }
     ag = gtk.AccelGroup()
@@ -184,7 +185,9 @@ class Text:
         self.id = Text.id
         Text.id = Text.id + 1
         self.committed = False
+        self.bookmark = None
         self.branches = []
+        self.curr_branch = None
         self.parent = parent
         if not self.parent is None:
             self.depth = self.parent.depth + 1
@@ -209,6 +212,24 @@ class UndoableBuffer(gtk.TextBuffer):
         self.connect('delete-range', self.on_delete_range)
         self.connect('begin_user_action', self.on_begin_user_action)
 
+    def go_next(self):
+        if not self.curr.parent is None:
+                if len(self.curr.parent.branches) == 1:
+                    return
+                else:
+                    self.curr.parent.curr_branch = self.curr.parent.branches.index(self.curr)
+                    if len(self.curr.parent.branches) - 1 > self.curr.parent.curr_branch:
+                        self.curr.parent.curr_branch += 1
+                        self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
+                        self.set_text(self.curr.text)
+                        return
+                    else:
+                        self.curr.parent.curr_branch -= len(self.curr.parent.branches)
+                        self.curr.parent.curr_branch += 1
+                        self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
+                        self.set_text(self.curr.text)
+                        return
+
     def commit_text(self):
         self.curr.committed = True
 
@@ -221,10 +242,13 @@ class UndoableBuffer(gtk.TextBuffer):
         if self.curr.committed:
             start, end = self.get_bounds()
             t = Text(self.get_text(start, end), self.curr)
+            t.bookmark = self.get_iter_at_offset(self.cursor-position)
             self.curr.branches.append(t)
             self.curr = t
         else:
             self.curr.text = self.get_text(self.get_start_iter(), self.get_end_iter())
+            if self.curr.bookmark.compare(self.get_iter_at_offset(self.cursor-position)) == -1:
+                self.curr.bookmark = self.get_iter_at_offset(self.cursor-position)
 
     def on_changed(self, textbuffer):
         if not self.command:
@@ -327,6 +351,12 @@ class BasicEdit(object):
             'lines': buf.get_line_count(),
             }, 5000)
         self.revision_status.set_text("Depth: " + str(buf.curr.depth) + " Committed: " + str(buf.curr.committed) + " Children: " + str(len(buf.curr.branches)) + " Id: " + str(buf.curr.id))
+
+    def go_next(self):
+        buf = self.textbox.get_buffer()
+        buf.command = True
+        buf.go_next()
+        buf.command = False
 
     def undo(self):
         """ Undo last typing """
