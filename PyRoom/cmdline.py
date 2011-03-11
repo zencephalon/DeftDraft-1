@@ -1,9 +1,9 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # -----------------------------------------------------------------------------
-# PyRoom - A clone of WriteRoom
+# CDraft, a fork of PyRoom.
 # Copyright (c) 2007 Nicolas P. Rougier & NoWhereMan
 # Copyright (c) 2008 The Pyroom Team - See AUTHORS file for more information
+# Copyright (c) 2011 Matthew Bunday
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
