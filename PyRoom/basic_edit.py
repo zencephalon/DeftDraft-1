@@ -335,6 +335,7 @@ class BasicEdit(object):
 
     def key_press_event(self, widget, event):
         """ key press event dispatcher """
+        self.show_revision_info()
         if event.state & gtk.gdk.CONTROL_MASK:
             if event.hardware_keycode in self.keybindings:
                 self.keybindings[event.hardware_keycode]()
@@ -373,7 +374,7 @@ class BasicEdit(object):
         buf.command = True
         buf.go_next()
         buf.command = False
-        self.show_revision_info()
+        #self.show_revision_info()
 
     def undo(self):
         """ Undo last typing """
@@ -382,7 +383,7 @@ class BasicEdit(object):
         buf.command = True
         buf.revert_to_parent()
         buf.command = False
-        self.show_revision_info()
+        #self.show_revision_info()
 
     def redo(self):
         """ Redo last typing """
@@ -390,7 +391,7 @@ class BasicEdit(object):
         buf = self.textbox.get_buffer()
         self.status.set_text("Should commit!")
         buf.commit_text()
-        self.show_revision_info()
+        #self.show_revision_info()
 
     def ask_restore(self):
         """ask if backups should be restored
@@ -575,9 +576,9 @@ the file.')
     def show_help(self):
         """ Create a new buffer and inserts help """
         buf = self.new_buffer()
-        buf.begin_not_undoable_action()
+        #buf.begin_not_undoable_action()
         buf.set_text(HELP)
-        buf.end_not_undoable_action()
+        #buf.end_not_undoable_action()
         self.status.set_text("Displaying help. Press control W to exit and \
 continue editing your document.")
 
