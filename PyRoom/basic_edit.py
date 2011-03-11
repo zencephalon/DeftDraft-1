@@ -246,17 +246,18 @@ class UndoableBuffer(gtk.TextBuffer):
             self.place_cursor(self.get_iter_at_offset(self.curr.bookmark_end))
 
     def set_the_text(self):
+        cursor_position = self.get_iter_at_mark(self.get_mark("insert"))
         if self.curr.committed:
             start, end = self.get_bounds()
-            t = Text(self.get_text(start, end), self.curr, self.get_iter_at_mark(self.get_mark("insert")), self.get_iter_at_mark(self.get_mark("insert")))
-            t.bookmark_start = self.get_iter_at_mark(self.get_mark("insert")).get_offset()
-            t.bookmark_end = self.get_iter_at_mark(self.get_mark("insert")).get_offset()
+            t = Text(self.get_text(start, end), self.curr, cursor_position, cursor_position)
+            t.bookmark_start = cursor_position.get_offset()
+            t.bookmark_end = cursor_position.get_offset()
             self.curr.branches.append(t)
             self.curr = t
         else:
             self.curr.text = self.get_text(self.get_start_iter(), self.get_end_iter())
-            if self.curr.bookmark_end < self.get_iter_at_mark(self.get_mark("insert")).get_offset():
-                self.curr.bookmark_end = self.get_iter_at_mark(self.get_mark("insert")).get_offset()
+            if self.curr.bookmark_end < cursor_position.get_offset():
+                self.curr.bookmark_end = cursor_position.get_offset()
 
     def on_changed(self, textbuffer):
         if not self.command:
