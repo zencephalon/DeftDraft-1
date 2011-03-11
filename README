@@ -27,18 +27,18 @@ $ git clone https://SlyShy@github.com/SlyShy/CDraft.git
 
 ==== Usage ====
 
-=== Running PyRoom ===
+=== Running CDraft ===
 
 To run pyroom and instruct it to load some existing files, type:
 
-  $ pyroom /path/to/file1 /other/path/to/file2
+  $ cdraft /path/to/file1 /other/path/to/file2
 
 === Example Usage ===
 
 For example, to load PyRoom and instruct it to load the files "article.txt" and
 "blogpost.txt", type the following:
 
-  $ pyroom article.txt blog.txt
+  $ cdraft article.txt blog.txt
 
 ==== Key Bindings ====
 
