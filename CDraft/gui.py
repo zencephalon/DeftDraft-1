@@ -79,7 +79,7 @@ class Theme(dict):
         order of preference is homedir, global dir, source dir (if available)"""
         local_directory = os.path.join(data_home, 'cdraft', 'themes')
         global_directory = '/usr/share/cdraft/themes' # FIXME: platform
-        # in case PyRoom is run without installation
+        # in case CDraft is run without installation
         fallback_directory = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             '..',
