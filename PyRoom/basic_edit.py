@@ -343,7 +343,11 @@ class BasicEdit(object):
 
     def show_revision_info(self):
         buf = self.buffers[self.current]
-        self.revision_status.set_text("Depth: " + str(buf.curr.depth) + " Committed: " + str(buf.curr.committed) + " Children: " + str(len(buf.curr.branches)) + " Id: " + str(buf.curr.id))
+        if buf.curr.committed:
+            part = "* "
+        else:
+            part = "  "
+        self.revision_status.set_text(part + str(buf.curr.depth) + " - " + str(len(buf.curr.branches)))
 
     def show_info(self):
         """ Display buffer information on status label for 5 seconds """
