@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.0
+Name=PyRoom
+Icon=/usr/share/pyroom/pyroom.png
+Comment=Distraction free full-screen text editor
+Exec=/usr/bin/pyroom %F
+Terminal=false
+Type=Application
+Categories=GNOME;GTK;Office;
+StartupNotify=false
+Name[en_US]=PyRoom
+Name[zh_TW]=專注編輯室
+Comment[zh_TW]=PyRoom 不會讓人分心的全螢幕編輯程式
+Name[de_DE]=PyRoom
+Comment[de_DE]=Schreiben ohne Ablenkung
