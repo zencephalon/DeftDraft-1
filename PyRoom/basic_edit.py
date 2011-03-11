@@ -177,6 +177,13 @@ class UndoableDelete(object):
         else:
             self.mergeable = True
 
+class Text:
+    def __init__(self, text=""):
+        self.text = text
+        self.committed = False
+        self.branches = []
+        self.parent = None
+
 class UndoableBuffer(gtk.TextBuffer):
     """text buffer with added undo capabilities
 
