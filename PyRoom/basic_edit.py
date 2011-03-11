@@ -205,7 +205,7 @@ class UndoableBuffer(gtk.TextBuffer):
         self.modified = False
         self.curr = Text()
         self.command = False
-        self.connect('insert-text', self.on_insert_text)
+        self.connect('changed', self.on_changed)
         self.connect('delete-range', self.on_delete_range)
         self.connect('begin_user_action', self.on_begin_user_action)
 
@@ -219,16 +219,16 @@ class UndoableBuffer(gtk.TextBuffer):
 
     def set_the_text(self):
         if self.curr.committed:
-            t = Text(self.get_text(self.get_start_iter(), self.get_end_iter()), self.curr)
+            start, end = self.get_bounds()
+            t = Text(self.get_text(start, end), self.curr)
             self.curr.branches.append(t)
             self.curr = t
         else:
             self.curr.text = self.get_text(self.get_start_iter(), self.get_end_iter())
 
-    def on_insert_text(self, textbuffer, text_iter, text, length):
+    def on_changed(self, textbuffer):
         if not self.command:
             self.set_the_text()
-        self.command = False
 
     def on_delete_range(self, text_buffer, start_iter, end_iter):
         if not self.command:
@@ -332,9 +332,9 @@ class BasicEdit(object):
         """ Undo last typing """
 
         buf = self.textbox.get_buffer()
-        self.status.set_text("Should revert!")
         buf.command = True
         buf.revert_to_parent()
+        buf.command = False
 
     def redo(self):
         """ Redo last typing """
