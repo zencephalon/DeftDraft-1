@@ -185,8 +185,8 @@ class Text:
         self.id = Text.id
         Text.id = Text.id + 1
         self.committed = False
-        self.bookmark_start = bookmark_start
-        self.bookmark_end = bookmark_end
+        self.bookmark_start = bookmark_start.get_offset()
+        self.bookmark_end = bookmark_end.get_offset()
         self.branches = []
         self.curr_branch = None
         self.parent = parent
@@ -223,12 +223,16 @@ class UndoableBuffer(gtk.TextBuffer):
                         self.curr.parent.curr_branch += 1
                         self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
                         self.set_text(self.curr.text)
+                        self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_start))
+                        self.move_mark_by_name("selection_bound", self.get_iter_at_offset(self.curr.bookmark_end))
                         return
                     else:
                         self.curr.parent.curr_branch -= len(self.curr.parent.branches)
                         self.curr.parent.curr_branch += 1
                         self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
                         self.set_text(self.curr.text)
+                        self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_start))
+                        self.move_mark_by_name("selection_bound", self.get_iter_at_offset(self.curr.bookmark_end))
                         return
 
     def commit_text(self):
@@ -238,19 +242,21 @@ class UndoableBuffer(gtk.TextBuffer):
         if not self.curr.parent is None:
             self.curr = self.curr.parent
             self.set_text(self.curr.text)
+            self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_start))
+            self.move_mark_by_name("selection_bound", self.get_iter_at_offset(self.curr.bookmark_end))
 
     def set_the_text(self):
         if self.curr.committed:
             start, end = self.get_bounds()
-            t = Text(self.get_text(start, end), self.curr)
-            t.bookmark_start = self.get_iter_at_mark(self.get_mark("insert"))
-            t.bookmark_end = self.get_iter_at_mark(self.get_mark("insert"))
+            t = Text(self.get_text(start, end), self.curr, self.get_iter_at_mark(self.get_mark("insert")), self.get_iter_at_mark(self.get_mark("insert")))
+            t.bookmark_start = self.get_iter_at_mark(self.get_mark("insert")).get_offset()
+            t.bookmark_end = self.get_iter_at_mark(self.get_mark("insert")).get_offset()
             self.curr.branches.append(t)
             self.curr = t
         else:
             self.curr.text = self.get_text(self.get_start_iter(), self.get_end_iter())
-            if self.curr.bookmark_end.compare(self.get_iter_at_mark(self.get_mark("insert"))) == -1:
-                self.curr.bookmark_end = self.get_iter_at_mark(self.get_mark("insert"))
+            if self.curr.bookmark_end < self.get_iter_at_mark(self.get_mark("insert")).get_offset():
+                self.curr.bookmark_end = self.get_iter_at_mark(self.get_mark("insert")).get_offset()
 
     def on_changed(self, textbuffer):
         if not self.command:
