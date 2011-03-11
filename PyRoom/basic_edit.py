@@ -213,6 +213,11 @@ class UndoableBuffer(gtk.TextBuffer):
         self.connect('delete-range', self.on_delete_range)
         self.connect('begin_user_action', self.on_begin_user_action)
 
+    def change_text(self):
+        self.set_text(self.curr.text)
+        self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_start - 1))
+        self.move_mark_by_name("selection_bound", self.get_iter_at_offset(self.curr.bookmark_end))
+
     def go_next(self):
         if not self.curr.parent is None:
                 if len(self.curr.parent.branches) == 1:
@@ -222,17 +227,13 @@ class UndoableBuffer(gtk.TextBuffer):
                     if len(self.curr.parent.branches) - 1 > self.curr.parent.curr_branch:
                         self.curr.parent.curr_branch += 1
                         self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
-                        self.set_text(self.curr.text)
-                        self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_start))
-                        self.move_mark_by_name("selection_bound", self.get_iter_at_offset(self.curr.bookmark_end))
+                        self.change_text()
                         return
                     else:
                         self.curr.parent.curr_branch -= len(self.curr.parent.branches)
                         self.curr.parent.curr_branch += 1
                         self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
-                        self.set_text(self.curr.text)
-                        self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_start))
-                        self.move_mark_by_name("selection_bound", self.get_iter_at_offset(self.curr.bookmark_end))
+                        self.change_text()
                         return
 
     def commit_text(self):
@@ -242,7 +243,7 @@ class UndoableBuffer(gtk.TextBuffer):
         if not self.curr.parent is None:
             self.curr = self.curr.parent
             self.set_text(self.curr.text)
-            self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_end))
+            self.place_cursor(self.get_iter_at_offset(self.curr.bookmark_end))
 
     def set_the_text(self):
         if self.curr.committed:
