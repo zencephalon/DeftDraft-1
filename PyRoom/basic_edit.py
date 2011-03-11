@@ -518,10 +518,10 @@ Open those instead of the original file?''')
         try:
             buffer_file = open(filename_to_open, 'r')
             buf = self.buffers[self.current]
-            buf.begin_not_undoable_action()
+            #buf.begin_not_undoable_action()
             utf8 = unicode(buffer_file.read(), 'utf-8')
             buf.set_text(utf8)
-            buf.end_not_undoable_action()
+            #buf.end_not_undoable_action()
             buffer_file.close()
         except IOError, (errno, strerror):
             errortext = _('Unable to open %(filename)s.') % {
@@ -558,8 +558,8 @@ the file.')
                         }
                     )
                 buffer_file.close()
-                buf.begin_not_undoable_action()
-                buf.end_not_undoable_action()
+                #buf.begin_not_undoable_action()
+                #buf.end_not_undoable_action()
                 self.status.set_text(_('File %s saved') % buf.filename)
             else:
                 self.save_file_as()
