@@ -180,12 +180,13 @@ class UndoableDelete(object):
 
 class Text:
     id = 0
-    def __init__(self, text="", parent = None, bookmark = None):
+    def __init__(self, text="", parent = None, bookmark_start = None, bookmark_end = None):
         self.text = text
         self.id = Text.id
         Text.id = Text.id + 1
         self.committed = False
-        self.bookmark = bookmark
+        self.bookmark_start = bookmark_start
+        self.bookmark_end = bookmark_end
         self.branches = []
         self.curr_branch = None
         self.parent = parent
@@ -206,7 +207,7 @@ class UndoableBuffer(gtk.TextBuffer):
         """
         gtk.TextBuffer.__init__(self)
         self.modified = False
-        self.curr = Text("", None, self.get_iter_at_mark(self.get_mark("insert")))
+        self.curr = Text("", None, self.get_iter_at_mark(self.get_mark("insert")), self.get_iter_at_mark(self.get_mark("insert")))
         self.command = False
         self.connect('changed', self.on_changed)
         self.connect('delete-range', self.on_delete_range)
@@ -242,13 +243,14 @@ class UndoableBuffer(gtk.TextBuffer):
         if self.curr.committed:
             start, end = self.get_bounds()
             t = Text(self.get_text(start, end), self.curr)
-            t.bookmark = self.get_iter_at_mark(self.get_mark("insert"))
+            t.bookmark_start = self.get_iter_at_mark(self.get_mark("insert"))
+            t.bookmark_end = self.get_iter_at_mark(self.get_mark("insert"))
             self.curr.branches.append(t)
             self.curr = t
         else:
             self.curr.text = self.get_text(self.get_start_iter(), self.get_end_iter())
-            if self.curr.bookmark.compare(self.get_iter_at_mark(self.get_mark("insert"))) == -1:
-                self.curr.bookmark = self.get_iter_at_mark(self.get_mark("insert"))
+            if self.curr.bookmark_end.compare(self.get_iter_at_mark(self.get_mark("insert"))) == -1:
+                self.curr.bookmark_end = self.get_iter_at_mark(self.get_mark("insert"))
 
     def on_changed(self, textbuffer):
         if not self.command:
