@@ -55,20 +55,21 @@ _('Control-Page Up: Switch to previous buffer'),
 _('Control-Page Down: Switch to next buffer'), ])
 
 HELP = \
-    _("""PyRoom - distraction free writing
+    _("""CDraft - distraction free writing
 Copyright (c) 2007 Nicolas Rougier, NoWhereMan
 Copyright (c) 2008 Bruno Bord and the PyRoom team
+Copyright (c) 2011 Matthew Bunday
 
-Welcome to PyRoom and distraction-free writing.
+Welcome to CDraft and distraction-free writing.
 
 To hide this help window, press Control-W.
 
-PyRoom stays out of your way with formatting options and buttons,
+CDraft stays out of your way with formatting options and buttons,
 it is largely keyboard controlled, via shortcuts. You can find a list
 of available keyboard shortcuts later.
 
-If enabled in preferences, cdraft will save your files automatically every
-few minutes or when you press the keyboard shortcut.
+If enabled in preferences, CDraft will save your files automatically every
+few minutes.
 
 Commands:
 ---------
