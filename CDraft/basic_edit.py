@@ -232,6 +232,7 @@ class UndoableBuffer(gtk.TextBuffer):
         self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_start - 1))
         self.move_mark_by_name("selection_bound", self.get_iter_at_offset(self.curr.bookmark_end))
 
+
     def go_next(self):
         if not self.curr.parent is None:
                 if len(self.curr.parent.branches) == 1:
@@ -281,6 +282,9 @@ class UndoableBuffer(gtk.TextBuffer):
             self.curr = self.curr.parent
             self.set_text(self.curr.text)
             self.place_cursor(self.get_iter_at_offset(self.curr.bookmark_end))
+
+    def revise(self):
+        cursor_position = self.get_iter_at_mark(self.get_mark("insert")).get_offset()
 
     def set_the_text(self):
         cursor_position = self.get_iter_at_mark(self.get_mark("insert"))
@@ -373,6 +377,7 @@ class BasicEdit(object):
     def key_press_event(self, widget, event):
         """ key press event dispatcher """
         self.show_revision_info()
+        #self.revision_status.set_text(str(self.buffers[self.current].revise()))
         if event.state & gtk.gdk.CONTROL_MASK:
             if event.hardware_keycode in self.keybindings:
                 self.keybindings[event.hardware_keycode]()
