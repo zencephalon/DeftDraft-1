@@ -285,6 +285,34 @@ class UndoableBuffer(gtk.TextBuffer):
 
     def revise(self):
         cursor_position = self.get_iter_at_mark(self.get_mark("insert")).get_offset()
+        text = self.get_text(start, end)
+
+        def get_word(text, pos, end):
+            if text[pos] == ' ' and (pos == end or text[pos] == ' '):
+                k = pos - 1
+                while text[k] != ' ' and k > 0:
+                    k -= 1
+                return get_word(text, k, end)
+            if pos > 0:
+                i = pos - 1
+                while text[i] != ' ' and i > 0:
+                    i -= 1
+            else:
+                i = 0
+
+            if pos < end:
+                j = pos
+                while j < end and text[j] != ' ':
+                    j += 1
+            else:
+                j = end
+
+            if i != 0:
+                i += 1
+            return [i, j]
+        i, j = get_word(text, cursor_position, len(text))
+
+
 
     def set_the_text(self):
         cursor_position = self.get_iter_at_mark(self.get_mark("insert"))
