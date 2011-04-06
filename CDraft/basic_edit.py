@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # -----------------------------------------------------------------------------
-# CDraft, a fork of PyRoom.
+# DeftDraft, a fork of PyRoom.
 # Copyright (c) 2007 Nicolas P. Rougier & NoWhereMan
 # Copyright (c) 2008 The Pyroom Team - See AUTHORS file for more information
 # Copyright (c) 2011 Matthew Bunday
@@ -20,10 +20,7 @@
 # -----------------------------------------------------------------------------
 
 """
-provide basic editor functionality
-
-contains basic functions needed for cdraft - any core functionality is included
-within this file
+This file provides all basic editor functionality.
 """
 
 import gtk
@@ -39,23 +36,23 @@ from globals import state, config
 FILE_UNNAMED = _('* Unnamed *')
 
 KEY_BINDINGS = '\n'.join([
-_('Control-H: Show help in a new buffer'),
-_('Control-I: Show buffer information'),
-_('Control-P: Shows Preferences dialog'),
-_('Control-M: Minimize PyRoom'),
-_('Control-N: Create a new buffer'),
-_('Control-O: Open a file in a new buffer'),
-_('Control-Q: Quit'),
-_('Control-S: Save current buffer'),
-_('Control-Shift-S: Save current buffer as'),
-_('Control-W: Close buffer and exit if it was the last buffer'),
-_('Control-Y: Redo last typing'),
-_('Control-Z: Undo last typing'),
-_('Control-Page Up: Switch to previous buffer'),
-_('Control-Page Down: Switch to next buffer'), ])
+    _('Control-H: Show help in a new buffer'),
+    _('Control-I: Show buffer information'),
+    _('Control-P: Shows Preferences dialog'),
+    _('Control-M: Minimize PyRoom'),
+    _('Control-N: Create a new buffer'),
+    _('Control-O: Open a file in a new buffer'),
+    _('Control-Q: Quit'),
+    _('Control-S: Save current buffer'),
+    _('Control-Shift-S: Save current buffer as'),
+    _('Control-W: Close buffer and exit if it was the last buffer'),
+    _('Control-Y: Redo last typing'),
+    _('Control-Z: Undo last typing'),
+    _('Control-Page Up: Switch to previous buffer'),
+    _('Control-Page Down: Switch to next buffer'), ])
 
 HELP = \
-    _("""CDraft - distraction free writing
+        _("""CDraft - distraction free writing
 Copyright (c) 2007 Nicolas Rougier, NoWhereMan
 Copyright (c) 2008 Bruno Bord and the PyRoom team
 Copyright (c) 2011 Matthew Bunday
@@ -86,14 +83,14 @@ def get_likely_chooser_path(buffers, current):
         directions = (
                 (range(current, 0, -1)),
                 (range(current, len(buffers), 1))
-        )
+                )
         for direction in directions:
             for buf_num in direction:
                 if buffers[buf_num].filename != FILE_UNNAMED:
                     return os.path.dirname(
                             os.path.abspath(
-                             buffers[buf_num].filename
-                             )
+                                buffers[buf_num].filename
+                                )
                             )
 
 def dispatch(*args, **kwargs):
@@ -109,54 +106,54 @@ def dispatch(*args, **kwargs):
 
 def make_accel_group(edit_instance):
     keybindings = {
-        'i': edit_instance.show_info,
-        's': edit_instance.commit,
-        'z': edit_instance.revert,
-        'n': edit_instance.new_buffer,
-        'o': edit_instance.open_file,
-        'p': edit_instance.preferences.show,
-        'q': edit_instance.dialog_quit,
-        'w': edit_instance.close_dialog,
-        'l': edit_instance.go_next,
-        'h': edit_instance.go_prev,
-        'j': edit_instance.go_down,
-        'k': edit_instance.revert,
-        'm': edit_instance.dialog_minimize,
-    }
+            'i': edit_instance.show_info,
+            's': edit_instance.commit,
+            'z': edit_instance.revert,
+            'n': edit_instance.new_buffer,
+            'o': edit_instance.open_file,
+            'p': edit_instance.preferences.show,
+            'q': edit_instance.dialog_quit,
+            'w': edit_instance.close_dialog,
+            'l': edit_instance.go_next,
+            'h': edit_instance.go_prev,
+            'j': edit_instance.go_down,
+            'k': edit_instance.revert,
+            'm': edit_instance.dialog_minimize,
+            }
     keybindings2 = {
-        'h': edit_instance.show_help,
-        's': edit_instance.save_file,
-    }
+            'h': edit_instance.show_help,
+            's': edit_instance.save_file,
+            }
     ag = gtk.AccelGroup()
     for key, value in keybindings.items():
         ag.connect_group(
-            ord(key),
-            gtk.gdk.CONTROL_MASK,
-            gtk.ACCEL_VISIBLE,
-            dispatch(value)
-        )
-    for key, value in keybindings2.items():
-        ag.connect_group(
-            ord(key),
-            gtk.gdk.MOD1_MASK,
-            gtk.ACCEL_VISIBLE,
-            dispatch(value)
-        )
-    ag.connect_group(
-        ord('s'),
-        gtk.gdk.CONTROL_MASK|gtk.gdk.SHIFT_MASK,
-        gtk.ACCEL_VISIBLE,
-        dispatch(edit_instance.save_file_as)
-    )
-    return ag
+                ord(key),
+                gtk.gdk.CONTROL_MASK,
+                gtk.ACCEL_VISIBLE,
+                dispatch(value)
+                )
+        for key, value in keybindings2.items():
+            ag.connect_group(
+                    ord(key),
+                    gtk.gdk.MOD1_MASK,
+                    gtk.ACCEL_VISIBLE,
+                    dispatch(value)
+                    )
+            ag.connect_group(
+                    ord('s'),
+                    gtk.gdk.CONTROL_MASK|gtk.gdk.SHIFT_MASK,
+                    gtk.ACCEL_VISIBLE,
+                    dispatch(edit_instance.save_file_as)
+                    )
+            return ag
 
 def define_keybindings(edit_instance):
     """define keybindings, respectively to keyboard layout"""
     keymap = gtk.gdk.keymap_get_default()
     basic_bindings = {
-        gtk.keysyms.Page_Up: edit_instance.prev_buffer,
-        gtk.keysyms.Page_Down: edit_instance.next_buffer,
-    }
+            gtk.keysyms.Page_Up: edit_instance.prev_buffer,
+            gtk.keysyms.Page_Down: edit_instance.next_buffer,
+            }
     translated_bindings = {}
     for key, value in basic_bindings.items():
         hardware_keycode = keymap.get_entries_for_keyval(key)[0][0]
@@ -192,23 +189,64 @@ class UndoableDelete(object):
         else:
             self.mergeable = True
 
-class Text:
-    id = 0
-    def __init__(self, text="", parent = None, bookmark_start = None, bookmark_end = None):
-        self.text = text
-        self.id = Text.id
-        Text.id = Text.id + 1
-        self.committed = False
+class TextSelection:
+    def __init__(self, text="", bookmark_start = None):
+        self.current = 0
+        self.text = [text]
+        self.terminal = ""
         self.bookmark_start = bookmark_start.get_offset()
-        self.bookmark_end = bookmark_end.get_offset()
-        self.branches = []
-        self.curr_branch = None
-        self.parent = parent
-        if not self.parent is None:
-            self.depth = self.parent.depth + 1
-        else:
-            self.depth = 0
 
+    def get_text():
+        text = ""
+        for subtext in self.text:
+            if type(subtext) == str:
+                text += subtext
+            else:
+                text += subtext.get_text
+            return text
+
+class SimpleText:
+    def __init__(self, text="", bookmark_start = None):
+        self.text = text
+        self.bookmark_start = bookmark_start.get_offset()
+
+    def get_text():
+        return self.text
+
+class Text:
+    def __init__(self, text="", bookmark_start = None):
+        self.text = [SimpleText(text, bookmark_start)]
+        self.bookmark_start = bookmark_start.get_offset()
+
+    def get_text():
+        text = ""
+        for subtext in self.text:
+            text += subtext.get_text()
+
+    def current():
+        for text in self.text:
+            # recurse to the other texts
+
+
+
+
+#class Text:
+#    id = 0
+#    def __init__(self, text="", parent = None, bookmark_start = None, bookmark_end = None):
+#        self.text = text
+#        self.id = Text.id
+#        Text.id = Text.id + 1
+#        self.committed = False
+#        self.bookmark_start = bookmark_start.get_offset()
+#        self.bookmark_end = bookmark_end.get_offset()
+#        self.branches = []
+#        self.curr_branch = None
+#        self.parent = parent
+#        if not self.parent is None:
+#            self.depth = self.parent.depth + 1
+#        else:
+#            self.depth = 0
+#
 class UndoableBuffer(gtk.TextBuffer):
     """text buffer with added undo capabilities
 
@@ -221,58 +259,58 @@ class UndoableBuffer(gtk.TextBuffer):
         """
         gtk.TextBuffer.__init__(self)
         self.modified = False
-        self.curr = Text("", None, self.get_iter_at_mark(self.get_mark("insert")), self.get_iter_at_mark(self.get_mark("insert")))
+        self.text = Text("", self.get_iter_at_mark(self.get_mark("insert")))
         self.command = False
         self.connect('changed', self.on_changed)
         self.connect('delete-range', self.on_delete_range)
         self.connect('begin_user_action', self.on_begin_user_action)
 
     def change_text(self):
-        self.set_text(self.curr.text)
-        self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_start - 1))
-        self.move_mark_by_name("selection_bound", self.get_iter_at_offset(self.curr.bookmark_end))
+        self.set_text(self.text.get_text())
+        #self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_start - 1))
+        #self.move_mark_by_name("selection_bound", self.get_iter_at_offset(self.curr.bookmark_end))
 
 
-    def go_next(self):
-        if not self.curr.parent is None:
-                if len(self.curr.parent.branches) == 1:
-                    return
-                else:
-                    self.curr.parent.curr_branch = self.curr.parent.branches.index(self.curr)
-                    if len(self.curr.parent.branches) - 1 > self.curr.parent.curr_branch:
-                        self.curr.parent.curr_branch += 1
-                        self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
-                        self.change_text()
-                        return
-                    else:
-                        self.curr.parent.curr_branch -= len(self.curr.parent.branches)
-                        self.curr.parent.curr_branch += 1
-                        self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
-                        self.change_text()
-                        return
+    #def go_next(self):
+    #    if not self.curr.parent is None:
+    #        if len(self.curr.parent.branches) == 1:
+    #            return
+    #        else:
+    #            self.curr.parent.curr_branch = self.curr.parent.branches.index(self.curr)
+    #            if len(self.curr.parent.branches) - 1 > self.curr.parent.curr_branch:
+    #                self.curr.parent.curr_branch += 1
+    #                self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
+    #                self.change_text()
+    #                return
+    #            else:
+    #                self.curr.parent.curr_branch -= len(self.curr.parent.branches)
+    #                self.curr.parent.curr_branch += 1
+    #                self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
+    #                self.change_text()
+    #                return
 
-    def go_down(self):
-        if not self.curr.branches == []:
-            self.curr = self.curr.branches[0]
-            self.change_text()
+    #def go_down(self):
+    #    if not self.curr.branches == []:
+    #        self.curr = self.curr.branches[0]
+    #        self.change_text()
 
-    def go_prev(self):
-        if not self.curr.parent is None:
-                if len(self.curr.parent.branches) == 1:
-                    return
-                else:
-                    self.curr.parent.curr_branch = self.curr.parent.branches.index(self.curr)
-                    if 0 < self.curr.parent.curr_branch:
-                        self.curr.parent.curr_branch -= 1
-                        self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
-                        self.change_text()
-                        return
-                    else:
-                        self.curr.parent.curr_branch += len(self.curr.parent.branches)
-                        self.curr.parent.curr_branch -= 1
-                        self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
-                        self.change_text()
-                        return
+    #def go_prev(self):
+    #    if not self.curr.parent is None:
+    #        if len(self.curr.parent.branches) == 1:
+    #            return
+    #        else:
+    #            self.curr.parent.curr_branch = self.curr.parent.branches.index(self.curr)
+    #            if 0 < self.curr.parent.curr_branch:
+    #                self.curr.parent.curr_branch -= 1
+    #                self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
+    #                self.change_text()
+    #                return
+    #            else:
+    #                self.curr.parent.curr_branch += len(self.curr.parent.branches)
+    #                self.curr.parent.curr_branch -= 1
+    #                self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
+    #                self.change_text()
+    #                return
 
     def commit_text(self):
         self.curr.committed = True
@@ -316,23 +354,24 @@ class UndoableBuffer(gtk.TextBuffer):
 
     def set_the_text(self):
         cursor_position = self.get_iter_at_mark(self.get_mark("insert"))
-        if self.curr.committed:
-            start, end = self.get_bounds()
-            t = Text(self.get_text(start, end), self.curr, cursor_position, cursor_position)
-            t.bookmark_start = cursor_position.get_offset()
-            t.bookmark_end = cursor_position.get_offset()
-            self.curr.branches.append(t)
-            self.curr = t
-        else:
-            self.curr.text = self.get_text(self.get_start_iter(), self.get_end_iter())
-            if self.curr.bookmark_end < cursor_position.get_offset():
-                self.curr.bookmark_end = cursor_position.get_offset()
+        #if self.curr.committed:
+        #    start, end = self.get_bounds()
+        #    t = Text(self.get_text(start, end), self.curr, cursor_position, cursor_position)
+        #    t.bookmark_start = cursor_position.get_offset()
+        #    t.bookmark_end = cursor_position.get_offset()
+        #    self.curr.branches.append(t)
+        #    self.curr = t
+        #else:
+        #    self.curr.text = self.get_text(self.get_start_iter(), self.get_end_iter())
+        #    if self.curr.bookmark_end < cursor_position.get_offset():
+        #        self.curr.bookmark_end = cursor_position.get_offset()
 
     def on_changed(self, textbuffer):
         if not self.command:
             self.set_the_text()
 
     def on_delete_range(self, text_buffer, start_iter, end_iter):
+        print "hello"
         if not self.command:
             self.set_the_text()
 
@@ -413,12 +452,13 @@ class BasicEdit(object):
         return False
 
     def show_revision_info(self):
-        buf = self.buffers[self.current]
-        if buf.curr.committed:
-            part = "(+) "
-        else:
-            part = "( ) "
-        self.revision_status.set_text(part + str(buf.curr.depth) + " - " + str(len(buf.curr.branches)))
+        #buf = self.buffers[self.current]
+        #if buf.curr.committed:
+        #    part = "(+) "
+        #else:
+        #    part = "( ) "
+        #self.revision_status.set_text(part + str(buf.curr.depth) + " - " + str(len(buf.curr.branches)))
+        self.revision_status.set_text("hello")
 
     def show_info(self):
         """ Display buffer information on status label for 5 seconds """
@@ -429,15 +469,15 @@ class BasicEdit(object):
         else:
             status = ''
         self.status.set_text(_('Buffer %(buffer_id)d: %(buffer_name)s\
-%(status)s, %(char_count)d character(s), %(word_count)d word(s)\
-, %(lines)d line(s)') % {
-            'buffer_id': self.current + 1,
-            'buffer_name': buf.filename if int(config.get('visual', 'showpath')) else os.path.split(buf.filename)[1],
-            'status': status,
-            'char_count': buf.get_char_count(),
-            'word_count': self.word_count(buf),
-            'lines': buf.get_line_count(),
-            }, 5000)
+                %(status)s, %(char_count)d character(s), %(word_count)d word(s)\
+                , %(lines)d line(s)') % {
+                    'buffer_id': self.current + 1,
+                    'buffer_name': buf.filename if int(config.get('visual', 'showpath')) else os.path.split(buf.filename)[1],
+                    'status': status,
+                    'char_count': buf.get_char_count(),
+                    'word_count': self.word_count(buf),
+                    'lines': buf.get_line_count(),
+                    }, 5000)
 
     def go_next(self):
         buf = self.textbox.get_buffer()
@@ -473,24 +513,24 @@ class BasicEdit(object):
         returns True if proposal is accepted
         returns False in any other case (declined/dialog closed)"""
         restore_dialog = gtk.Dialog(
-            title=_('Restore backup?'),
-            parent=self.window,
-            flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-            buttons=(
-                gtk.STOCK_DISCARD, gtk.RESPONSE_REJECT,
-                gtk.STOCK_OPEN, gtk.RESPONSE_ACCEPT
-            )
-        )
+                title=_('Restore backup?'),
+                parent=self.window,
+                flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                buttons=(
+                    gtk.STOCK_DISCARD, gtk.RESPONSE_REJECT,
+                    gtk.STOCK_OPEN, gtk.RESPONSE_ACCEPT
+                    )
+                )
         question_asked = gtk.Label(
-            _('''Backup information for this file has been found.
+                _('''Backup information for this file has been found.
 Open those instead of the original file?''')
-        )
+                )
         question_asked.set_line_wrap(True)
 
         question_sign = gtk.image_new_from_stock(
-            stock_id=gtk.STOCK_DIALOG_QUESTION,
-            size=gtk.ICON_SIZE_DIALOG
-        )
+                stock_id=gtk.STOCK_DIALOG_QUESTION,
+                size=gtk.ICON_SIZE_DIALOG
+                )
         question_sign.show()
 
         hbox = gtk.HBox()
@@ -498,8 +538,8 @@ Open those instead of the original file?''')
         hbox.pack_start(question_asked, True, True, 0)
         hbox.show()
         restore_dialog.vbox.pack_start(
-            hbox, True, True, 0
-        )
+                hbox, True, True, 0
+                )
 
         restore_dialog.set_default_response(gtk.RESPONSE_ACCEPT)
         restore_dialog.show_all()
@@ -513,13 +553,13 @@ Open those instead of the original file?''')
         chooser = gtk.FileChooserDialog('PyRoom', self.window,
                 gtk.FILE_CHOOSER_ACTION_OPEN,
                 buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+                    gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         chooser.set_default_response(gtk.RESPONSE_OK)
         buf = self.buffers[self.current]
         if buf.filename != FILE_UNNAMED:
             chooser.set_current_folder(
-                os.path.dirname(os.path.abspath(buf.filename)
-            ))
+                    os.path.dirname(os.path.abspath(buf.filename)
+                        ))
         else:
             chooser_path = get_likely_chooser_path(self.buffers, self.current)
             if chooser_path:
@@ -560,13 +600,13 @@ Open those instead of the original file?''')
             buffer_file.close()
         except IOError, (errno, strerror):
             errortext = _('Unable to open %(filename)s.') % {
-                'filename': filename_to_open
-            }
+                    'filename': filename_to_open
+                    }
             if errno == 13:
                 errortext += _(' You do not have permission to open \
-the file.')
-            if not errno == 2:
-                raise CDraftError(errortext)
+                        the file.')
+                if not errno == 2:
+                    raise CDraftError(errortext)
         except:
             raise CDraftError(_('Unable to open %s\n') % filename_to_open)
         else:
@@ -579,20 +619,20 @@ the file.')
             if buf.filename != FILE_UNNAMED:
                 buffer_file = open(buf.filename, 'w')
                 txt = buf.get_text(buf.get_start_iter(),
-                                     buf.get_end_iter())
+                        buf.get_end_iter())
                 buffer_file.write(txt)
                 if self.recent_manager:
                     self.recent_manager.add_full(
-                        "file://" + urllib.quote(buf.filename),
-                        {
-                            'mime_type':'text/plain',
-                            'app_name':'cdraft',
-                            'app_exec':'%F',
-                            'is_private':False,
-                            'display_name':os.path.basename(buf.filename),
-                        }
-                    )
-                buffer_file.close()
+                            "file://" + urllib.quote(buf.filename),
+                            {
+                                'mime_type':'text/plain',
+                                'app_name':'cdraft',
+                                'app_exec':'%F',
+                                'is_private':False,
+                                'display_name':os.path.basename(buf.filename),
+                                }
+                            )
+                    buffer_file.close()
                 #buf.begin_not_undoable_action()
                 #buf.end_not_undoable_action()
                 self.status.set_text(_('File %s saved') % buf.filename)
@@ -601,11 +641,11 @@ the file.')
                 return
         except IOError, (errno, strerror):
             errortext = _('Unable to save %(filename)s.') % {
-                'filename': buf.filename}
+                    'filename': buf.filename}
             if errno == 13:
                 errortext += _(' You do not have permission to write to \
-the file.')
-            raise CDraftError(errortext)
+                        the file.')
+                raise CDraftError(errortext)
         except:
             raise CDraftError(_('Unable to save %s\n') % buf.filename)
         buf.modified = False
@@ -617,7 +657,7 @@ the file.')
         chooser = gtk.FileChooserDialog('PyRoom', self.window,
                 gtk.FILE_CHOOSER_ACTION_SAVE,
                 buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                gtk.STOCK_SAVE, gtk.RESPONSE_OK))
+                    gtk.STOCK_SAVE, gtk.RESPONSE_OK))
         chooser.set_default_response(gtk.RESPONSE_OK)
         chooser.set_do_overwrite_confirmation(True)
         if buf.filename != FILE_UNNAMED:
@@ -655,7 +695,7 @@ the file.')
         buf.set_text(HELP)
         #buf.end_not_undoable_action()
         self.status.set_text("Displaying help. Press control W to exit and \
-continue editing your document.")
+                continue editing your document.")
 
     def new_buffer(self):
         """ Create a new buffer """
@@ -694,8 +734,8 @@ continue editing your document.")
     def close_buffer(self):
         """ Close current buffer """
         autosave_fname = autosave.get_autosave_filename(
-            self.buffers[self.current].filename
-        )
+                self.buffers[self.current].filename
+                )
         if os.path.isfile(autosave_fname):
             try:
                 os.remove(autosave_fname)
@@ -717,36 +757,35 @@ continue editing your document.")
             self.textbox.set_buffer(buf)
             if hasattr(self, 'status'):
                 self.status.set_text(
-                    _('Switching to buffer %(buffer_id)d (%(buffer_name)s)')
-                    % {'buffer_id': self.current + 1,
-                       'buffer_name': buf.filename}
-                )
+                        _('Switching to buffer %(buffer_id)d (%(buffer_name)s)')
+                        % {'buffer_id': self.current + 1,
+                            'buffer_name': buf.filename}
+                        )
 
     def next_buffer(self):
         """ Switch to next buffer """
-
         if self.current < len(self.buffers) - 1:
             self.current += 1
         else:
             self.current = 0
         self.set_buffer(self.current)
         state['gui'].textbox.scroll_to_mark(
-            self.buffers[self.current].get_insert(),
-            0.0,
-        )
+                self.buffers[self.current].get_insert(),
+                0.0,
+                )
 
     def prev_buffer(self):
         """ Switch to prev buffer """
-
         if self.current > 0:
             self.current -= 1
         else:
             self.current = len(self.buffers) - 1
         self.set_buffer(self.current)
         state['gui'].textbox.scroll_to_mark(
-            self.buffers[self.current].get_insert(),
-            0.0,
-        )
+                self.buffers[self.current].get_insert(),
+                0.0,
+                )
+
     def dialog_quit(self):
         """the quit dialog"""
         count = 0
