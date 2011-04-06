@@ -190,67 +190,94 @@ class UndoableDelete(object):
             self.mergeable = True
 
 class TextSelection:
-    def __init__(self, text="", bookmark_start = None):
+    def __init__(self, text="", bookmark_start = None, parent = None):
         self.current = 0
-        self.text = [SimpleText(text, bookmark_start)]
+        self.selection = 0
+        self.text = [[SimpleText(text, bookmark_start, self)]]
         self.terminal = ""
         self.start_pos = bookmark_start.get_offset()
 
     def get_text(self):
         text = ""
-        for subtext in self.text:
-            if type(subtext) == str:
-                text += subtext
-            else:
-                text += subtext.get_text
-            return text
+        for subtext in self.text[selection]:
+            text += subtext.get_text
+        return text
 
-    def current(self, offset):
+    def get_current(self, offset):
         if start_pos <= offset and offset < offset + len(self.text):
-            for text in self.text:
-                current = text.current(offset)
+            for text in self.text[selection]:
+                current = text.get_current(offset)
                 if current == False:
                     continue
                 else:
+                    self.current = self.text[selection].index(current)
                     return current
         else:
             return False;
 
+    def shift_by(self, length):
+        for i in range(self.current + 1, len(self.text[selection])):
+            if self.text[selection][i] != None:
+                self.text[selection][i].shift_by(length)
+
+    def insert_text(self, inserted_text, insert_position):
+        self.text[selection][current] = self.text[selection][current][0:(insert_position - start_pos)] + inserted_text + self.text[selection][current][(insert_position - start_pos):len(self.text)]
+        if self.parent != None:
+            self.parent.shift_by(len(inserted_text))
+
+
 
 class SimpleText:
-    def __init__(self, text="", bookmark_start = None):
+    def __init__(self, text="", bookmark_start = None, parent = None):
         self.text = text
         self.start_pos = bookmark_start.get_offset()
+        self.parent = parent
 
     def get_text(self):
         return self.text
 
-    def current(self, offset):
-        if start_pos <= offset and offset < offset + len(self.text):
+    def shift_by(self, length):
+        self.start_pos += length
+
+    def get_current(self, offset):
+        if self.start_pos <= offset and offset <= self.start_pos + len(self.text):
             return self;
         else:
             return False;
 
+    def insert_text(self, inserted_text, insert_position):
+        self.text = self.text[0:(insert_position - self.start_pos)] + inserted_text + self.text[(insert_position - self.start_pos):len(self.text)]
+        if self.parent != None:
+            self.parent.shift_by(len(inserted_text))
+
 
 class Text:
     def __init__(self, text="", bookmark_start = None):
-        self.text = [SimpleText(text, bookmark_start)]
+        self.current = 0
+        self.text = [SimpleText(text, bookmark_start, self)]
         self.bookmark_start = bookmark_start.get_offset()
 
-    def get_text():
+    def get_text(self):
         text = ""
         for subtext in self.text:
             text += subtext.get_text()
+        return text
 
-    def current(offset):
+    def get_current(self, offset):
         for text in self.text:
-            current = text.current(offset)
+            current = text.get_current(offset)
             if current == False:
                 continue
             else:
+                self.current = self.text.index(current)
                 return current
 
-            # recurse to the other texts
+    def shift_by(self, length):
+        for i in range(self.current + 1, len(self.text)):
+            if self.text[i] != None:
+                self.text[i].shift_by(length)
+
+
 
 
 
@@ -291,7 +318,10 @@ class UndoableBuffer(gtk.TextBuffer):
         self.connect('begin_user_action', self.on_begin_user_action)
         self.connect('insert-text', self.on_insert_text)
 
-    def on_insert_text:
+    def on_insert_text(self, textbuffer, pos_iter, inserted_text, inserted_length):
+        current = self.text.get_current(pos_iter.get_offset())
+        current.insert_text(inserted_text, pos_iter.get_offset());
+        print self.text.get_text()
     
     def change_text(self):
         self.set_text(self.text.get_text())
@@ -399,7 +429,6 @@ class UndoableBuffer(gtk.TextBuffer):
    #         self.set_the_text()
 
     def on_delete_range(self, text_buffer, start_iter, end_iter):
-        print "hello"
         if not self.command:
             self.set_the_text()
 
