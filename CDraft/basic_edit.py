@@ -192,11 +192,11 @@ class UndoableDelete(object):
 class TextSelection:
     def __init__(self, text="", bookmark_start = None):
         self.current = 0
-        self.text = [text]
+        self.text = [SimpleText(text, bookmark_start)]
         self.terminal = ""
-        self.bookmark_start = bookmark_start.get_offset()
+        self.start_pos = bookmark_start.get_offset()
 
-    def get_text():
+    def get_text(self):
         text = ""
         for subtext in self.text:
             if type(subtext) == str:
@@ -205,13 +205,32 @@ class TextSelection:
                 text += subtext.get_text
             return text
 
+    def current(self, offset):
+        if start_pos <= offset and offset < offset + len(self.text):
+            for text in self.text:
+                current = text.current(offset)
+                if current == False:
+                    continue
+                else:
+                    return current
+        else:
+            return False;
+
+
 class SimpleText:
     def __init__(self, text="", bookmark_start = None):
         self.text = text
-        self.bookmark_start = bookmark_start.get_offset()
+        self.start_pos = bookmark_start.get_offset()
 
-    def get_text():
+    def get_text(self):
         return self.text
+
+    def current(self, offset):
+        if start_pos <= offset and offset < offset + len(self.text):
+            return self;
+        else:
+            return False;
+
 
 class Text:
     def __init__(self, text="", bookmark_start = None):
@@ -223,8 +242,14 @@ class Text:
         for subtext in self.text:
             text += subtext.get_text()
 
-    def current():
+    def current(offset):
         for text in self.text:
+            current = text.current(offset)
+            if current == False:
+                continue
+            else:
+                return current
+
             # recurse to the other texts
 
 
@@ -261,10 +286,13 @@ class UndoableBuffer(gtk.TextBuffer):
         self.modified = False
         self.text = Text("", self.get_iter_at_mark(self.get_mark("insert")))
         self.command = False
-        self.connect('changed', self.on_changed)
+        #self.connect('changed', self.on_changed)
         self.connect('delete-range', self.on_delete_range)
         self.connect('begin_user_action', self.on_begin_user_action)
+        self.connect('insert-text', self.on_insert_text)
 
+    def on_insert_text:
+    
     def change_text(self):
         self.set_text(self.text.get_text())
         #self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_start - 1))
@@ -366,9 +394,9 @@ class UndoableBuffer(gtk.TextBuffer):
         #    if self.curr.bookmark_end < cursor_position.get_offset():
         #        self.curr.bookmark_end = cursor_position.get_offset()
 
-    def on_changed(self, textbuffer):
-        if not self.command:
-            self.set_the_text()
+   # def on_changed(self, textbuffer):
+   #     if not self.command:
+   #         self.set_the_text()
 
     def on_delete_range(self, text_buffer, start_iter, end_iter):
         print "hello"
