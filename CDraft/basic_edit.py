@@ -250,6 +250,11 @@ class SimpleText:
         if self.parent != None:
             self.parent.shift_by(len(inserted_text))
 
+    def delete_text(self, start_offset, end_offset):
+        self.text = self.text[0:(start_offset - self.start_pos)] + self.text[(end_offset - self.start_pos):len(self.text)]
+        if self.parent != None:
+            self.parent.shift_by(start_offset - end_offset)
+
 
 class Text:
     def __init__(self, text="", bookmark_start = None):
@@ -321,6 +326,11 @@ class UndoableBuffer(gtk.TextBuffer):
     def on_insert_text(self, textbuffer, pos_iter, inserted_text, inserted_length):
         current = self.text.get_current(pos_iter.get_offset())
         current.insert_text(inserted_text, pos_iter.get_offset());
+        print self.text.get_text()
+
+    def on_delete_range(self, text_buffer, start_iter, end_iter):
+        current = self.text.get_current(start_iter.get_offset())
+        current.delete_text(start_iter.get_offset(), end_iter.get_offset());
         print self.text.get_text()
     
     def change_text(self):
@@ -428,9 +438,6 @@ class UndoableBuffer(gtk.TextBuffer):
    #     if not self.command:
    #         self.set_the_text()
 
-    def on_delete_range(self, text_buffer, start_iter, end_iter):
-        if not self.command:
-            self.set_the_text()
 
     def on_begin_user_action(self, *args, **kwargs):
         pass
