@@ -117,7 +117,7 @@ def make_accel_group(edit_instance):
             'l': edit_instance.go_next,
             'h': edit_instance.go_prev,
             'j': edit_instance.go_down,
-            'k': edit_instance.revert,
+            'k': edit_instance.revise_word,
             'm': edit_instance.dialog_minimize,
             }
     keybindings2 = {
@@ -132,20 +132,20 @@ def make_accel_group(edit_instance):
                 gtk.ACCEL_VISIBLE,
                 dispatch(value)
                 )
-        for key, value in keybindings2.items():
-            ag.connect_group(
-                    ord(key),
-                    gtk.gdk.MOD1_MASK,
-                    gtk.ACCEL_VISIBLE,
-                    dispatch(value)
-                    )
-            ag.connect_group(
-                    ord('s'),
-                    gtk.gdk.CONTROL_MASK|gtk.gdk.SHIFT_MASK,
-                    gtk.ACCEL_VISIBLE,
-                    dispatch(edit_instance.save_file_as)
-                    )
-            return ag
+    for key, value in keybindings2.items():
+        ag.connect_group(
+                ord(key),
+                gtk.gdk.MOD1_MASK,
+                gtk.ACCEL_VISIBLE,
+                dispatch(value)
+                )
+    ag.connect_group(
+            ord('s'),
+            gtk.gdk.CONTROL_MASK|gtk.gdk.SHIFT_MASK,
+            gtk.ACCEL_VISIBLE,
+            dispatch(edit_instance.save_file_as)
+            )
+    return ag
 
 def define_keybindings(edit_instance):
     """define keybindings, respectively to keyboard layout"""
@@ -221,9 +221,14 @@ class TextSelection:
                 self.text[selection][i].shift_by(length)
 
     def insert_text(self, inserted_text, insert_position):
-        self.text[selection][current] = self.text[selection][current][0:(insert_position - start_pos)] + inserted_text + self.text[selection][current][(insert_position - start_pos):len(self.text)]
+        self.text[selection][current].insert_text(inserted_text, insert_position)
         if self.parent != None:
             self.parent.shift_by(len(inserted_text))
+
+    def delete_text(self, start_offset, end_offset):
+        self.text[selection][current].delete_text(start_offset, end_offset)
+        if self.parent != None:
+            self.parent.shift_by(start_offset - end_offset)
 
 
 
@@ -326,14 +331,14 @@ class UndoableBuffer(gtk.TextBuffer):
     def on_insert_text(self, textbuffer, pos_iter, inserted_text, inserted_length):
         current = self.text.get_current(pos_iter.get_offset())
         current.insert_text(inserted_text, pos_iter.get_offset());
-        print self.text.get_text()
+        #print self.text.get_text()
 
     def on_delete_range(self, text_buffer, start_iter, end_iter):
         current = self.text.get_current(start_iter.get_offset())
         current.delete_text(start_iter.get_offset(), end_iter.get_offset());
-        print self.text.get_text()
+        #print self.text.get_text()
     
-    def change_text(self):
+    def update_text(self):
         self.set_text(self.text.get_text())
         #self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_start - 1))
         #self.move_mark_by_name("selection_bound", self.get_iter_at_offset(self.curr.bookmark_end))
@@ -391,32 +396,40 @@ class UndoableBuffer(gtk.TextBuffer):
 
     def revise(self):
         cursor_position = self.get_iter_at_mark(self.get_mark("insert")).get_offset()
-        text = self.get_text(start, end)
+        text = self.text.get_text()
 
         def get_word(text, pos, end):
-            if text[pos] == ' ' and (pos == end or text[pos] == ' '):
-                k = pos - 1
-                while text[k] != ' ' and k > 0:
-                    k -= 1
-                return get_word(text, k, end)
-            if pos > 0:
-                i = pos - 1
-                while text[i] != ' ' and i > 0:
+            if pos == end:
+                j = pos
+                i = pos
+                while i > 0 and text[i - 1] == ' ':
+                    i -= 1
+                while i > 0 and text[i - 1] != ' ':
                     i -= 1
             else:
-                i = 0
+                if text[pos] != ' ':
+                    i = pos
+                    while i > 0 and text[i - 1] != ' ':
+                        i -= 1
+                    j = pos
+                    while j < end and text[j] != ' ':
+                        j += 1
+                else:
+                    j = pos
+                    i = pos
+                    while i > 0 and text[i - 1] == ' ':
+                        i -= 1
+                    while i > 0 and text[i - 1] != ' ':
+                        i -= 1
+            return [i,j]
 
-            if pos < end:
-                j = pos
-                while j < end and text[j] != ' ':
-                    j += 1
-            else:
-                j = end
-
-            if i != 0:
-                i += 1
-            return [i, j]
+        print str(text)
+        print str(cursor_position)
+        print str(len(text))
         i, j = get_word(text, cursor_position, len(text))
+        print "FFFFFF"
+        self.text.get_current(cursor_position).delete_text(i, j)
+        self.update_text()
 
 
 
@@ -548,6 +561,11 @@ class BasicEdit(object):
         buf.command = True
         buf.go_next()
         buf.command = False
+
+    def revise_word(self):
+        print "ffffff"
+        buf = self.textbox.get_buffer()
+        buf.revise()
 
     def go_prev(self):
         buf = self.textbox.get_buffer()
