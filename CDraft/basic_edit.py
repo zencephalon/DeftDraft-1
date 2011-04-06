@@ -199,34 +199,34 @@ class TextSelection:
 
     def get_text(self):
         text = ""
-        for subtext in self.text[selection]:
-            text += subtext.get_text
+        for subtext in self.text[self.selection]:
+            text += subtext.get_text()
         return text
 
     def get_current(self, offset):
         if start_pos <= offset and offset < offset + len(self.text):
-            for text in self.text[selection]:
+            for text in self.text[self.selection]:
                 current = text.get_current(offset)
                 if current == False:
                     continue
                 else:
-                    self.current = self.text[selection].index(current)
+                    self.current = self.text[self.selection].index(current)
                     return current
         else:
             return False;
 
     def shift_by(self, length):
-        for i in range(self.current + 1, len(self.text[selection])):
-            if self.text[selection][i] != None:
-                self.text[selection][i].shift_by(length)
+        for i in range(self.current + 1, len(self.text[self.selection])):
+            if self.text[self.selection][i] != None:
+                self.text[self.selection][i].shift_by(length)
 
     def insert_text(self, inserted_text, insert_position):
-        self.text[selection][current].insert_text(inserted_text, insert_position)
+        self.text[self.selection][self.current].insert_text(inserted_text, insert_position)
         if self.parent != None:
             self.parent.shift_by(len(inserted_text))
 
     def delete_text(self, start_offset, end_offset):
-        self.text[selection][current].delete_text(start_offset, end_offset)
+        self.text[self.selection][self.current].delete_text(start_offset, end_offset)
         if self.parent != None:
             self.parent.shift_by(start_offset - end_offset)
 
@@ -273,6 +273,9 @@ class Text:
             text += subtext.get_text()
         return text
 
+    def push(self, text):
+        self.text.append(text)
+
     def get_current(self, offset):
         for text in self.text:
             current = text.get_current(offset)
@@ -287,28 +290,6 @@ class Text:
             if self.text[i] != None:
                 self.text[i].shift_by(length)
 
-
-
-
-
-
-#class Text:
-#    id = 0
-#    def __init__(self, text="", parent = None, bookmark_start = None, bookmark_end = None):
-#        self.text = text
-#        self.id = Text.id
-#        Text.id = Text.id + 1
-#        self.committed = False
-#        self.bookmark_start = bookmark_start.get_offset()
-#        self.bookmark_end = bookmark_end.get_offset()
-#        self.branches = []
-#        self.curr_branch = None
-#        self.parent = parent
-#        if not self.parent is None:
-#            self.depth = self.parent.depth + 1
-#        else:
-#            self.depth = 0
-#
 class UndoableBuffer(gtk.TextBuffer):
     """text buffer with added undo capabilities
 
@@ -343,47 +324,6 @@ class UndoableBuffer(gtk.TextBuffer):
         #self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_start - 1))
         #self.move_mark_by_name("selection_bound", self.get_iter_at_offset(self.curr.bookmark_end))
 
-
-    #def go_next(self):
-    #    if not self.curr.parent is None:
-    #        if len(self.curr.parent.branches) == 1:
-    #            return
-    #        else:
-    #            self.curr.parent.curr_branch = self.curr.parent.branches.index(self.curr)
-    #            if len(self.curr.parent.branches) - 1 > self.curr.parent.curr_branch:
-    #                self.curr.parent.curr_branch += 1
-    #                self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
-    #                self.change_text()
-    #                return
-    #            else:
-    #                self.curr.parent.curr_branch -= len(self.curr.parent.branches)
-    #                self.curr.parent.curr_branch += 1
-    #                self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
-    #                self.change_text()
-    #                return
-
-    #def go_down(self):
-    #    if not self.curr.branches == []:
-    #        self.curr = self.curr.branches[0]
-    #        self.change_text()
-
-    #def go_prev(self):
-    #    if not self.curr.parent is None:
-    #        if len(self.curr.parent.branches) == 1:
-    #            return
-    #        else:
-    #            self.curr.parent.curr_branch = self.curr.parent.branches.index(self.curr)
-    #            if 0 < self.curr.parent.curr_branch:
-    #                self.curr.parent.curr_branch -= 1
-    #                self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
-    #                self.change_text()
-    #                return
-    #            else:
-    #                self.curr.parent.curr_branch += len(self.curr.parent.branches)
-    #                self.curr.parent.curr_branch -= 1
-    #                self.curr = self.curr.parent.branches[self.curr.parent.curr_branch]
-    #                self.change_text()
-    #                return
 
     def commit_text(self):
         self.curr.committed = True
@@ -428,7 +368,9 @@ class UndoableBuffer(gtk.TextBuffer):
         print str(len(text))
         i, j = get_word(text, cursor_position, len(text))
         print "FFFFFF"
+        temp = text[i:j]
         self.text.get_current(cursor_position).delete_text(i, j)
+        self.text.push(TextSelection(temp, self.get_iter_at_mark(self.get_mark("insert")), self.text))
         self.update_text()
 
 
