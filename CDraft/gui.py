@@ -184,7 +184,7 @@ class GUI(object):
         self.hbox2.set_spacing(12)
         self.hbox2.pack_end(self.revision_status, True, True, 0)
         self.vbox.pack_start(self.hbox2, False, False, 0)
-        self.revision_status.modify_font(pango.FontDescription("Monospace 12"))
+        #self.revision_status.modify_font(pango.FontDescription("Monospace 12"))
         self.revision_status.set_alignment(0.0, 0.5)
         self.revision_status.set_justify(gtk.JUSTIFY_LEFT)
         self.revision_status.set_text("")

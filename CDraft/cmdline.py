@@ -70,7 +70,7 @@ simply and efficiently in a full-screen window, with no distractions.'))
 
     state['edit_instance'].set_buffer(buffnum)
     state['edit_instance'].status.set_text(
-        _('Welcome to CDraft %s, type Alt-H for help') % __VERSION__
+        _('Welcome to DeftDraft %s, type Alt-H for help.') % __VERSION__
     )
     gtk.main()
 

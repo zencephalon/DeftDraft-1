@@ -26,6 +26,7 @@ This file provides all basic editor functionality.
 import gtk
 import os
 import urllib
+import pango
 
 from cdraft_error import CDraftError
 from gui import GUI
@@ -52,20 +53,20 @@ KEY_BINDINGS = '\n'.join([
     _('Control-Page Down: Switch to next buffer'), ])
 
 HELP = \
-        _("""CDraft - distraction free writing
+        _("""DeftDraft - Lightning-quick revision
 Copyright (c) 2007 Nicolas Rougier, NoWhereMan
 Copyright (c) 2008 Bruno Bord and the PyRoom team
 Copyright (c) 2011 Matthew Bunday
 
-Welcome to CDraft and distraction-free writing.
+Welcome to DeftDraft and lightning-quick writing.
 
 To hide this help window, press Control-W.
 
-CDraft stays out of your way with formatting options and buttons,
+DeftDraft stays out of your way with formatting options and buttons,
 it is largely keyboard controlled, via shortcuts. You can find a list
 of available keyboard shortcuts later.
 
-If enabled in preferences, CDraft will save your files automatically every
+If enabled in preferences, DeftDraft will save your files automatically every
 few minutes.
 
 Commands:
@@ -115,8 +116,8 @@ def make_accel_group(edit_instance):
             'q': edit_instance.dialog_quit,
             'w': edit_instance.close_dialog,
             'l': edit_instance.go_next,
-            'h': edit_instance.go_prev,
-            'j': edit_instance.go_down,
+            'h': edit_instance.highlight_selection2,
+            'j': edit_instance.highlight_selection,
             'k': edit_instance.revise_word,
             'm': edit_instance.dialog_minimize,
             }
@@ -308,6 +309,8 @@ class UndoableBuffer(gtk.TextBuffer):
         self.connect('delete-range', self.on_delete_range)
         self.connect('begin_user_action', self.on_begin_user_action)
         self.connect('insert-text', self.on_insert_text)
+        self.i_tag = self.create_tag( "i", background="#DDDDDD")
+        self.j_tag = self.create_tag( "j", background="#EEEEEE")
 
     def on_insert_text(self, textbuffer, pos_iter, inserted_text, inserted_length):
         current = self.text.get_current(pos_iter.get_offset())
@@ -324,6 +327,10 @@ class UndoableBuffer(gtk.TextBuffer):
         #self.move_mark_by_name("insert", self.get_iter_at_offset(self.curr.bookmark_start - 1))
         #self.move_mark_by_name("selection_bound", self.get_iter_at_offset(self.curr.bookmark_end))
 
+    def highlight_selection(self):
+        self.apply_tag(self.i_tag, self.get_iter_at_mark(self.get_mark("insert")), self.get_iter_at_mark(self.get_mark("selection_bound")))
+    def highlight_selection2(self):
+        self.apply_tag(self.j_tag, self.get_iter_at_mark(self.get_mark("insert")), self.get_iter_at_mark(self.get_mark("selection_bound")))
 
     def commit_text(self):
         self.curr.committed = True
@@ -470,6 +477,13 @@ class BasicEdit(object):
                 return True
         return False
 
+    def highlight_selection(self):
+        buf = self.buffers[self.current]
+        buf.highlight_selection()
+    def highlight_selection2(self):
+        buf = self.buffers[self.current]
+        buf.highlight_selection2()
+
     def show_revision_info(self):
         #buf = self.buffers[self.current]
         #if buf.curr.committed:
@@ -477,7 +491,7 @@ class BasicEdit(object):
         #else:
         #    part = "( ) "
         #self.revision_status.set_text(part + str(buf.curr.depth) + " - " + str(len(buf.curr.branches)))
-        self.revision_status.set_text("hello")
+        self.revision_status.set_text("Revisions: 2")
 
     def show_info(self):
         """ Display buffer information on status label for 5 seconds """
